@@ -1,0 +1,214 @@
+MODULE SocketServer
+    VAR socketdev serverSocket;
+    VAR socketdev clientSocket;
+    VAR string data;
+    VAR num i := 1;
+    VAR string part;
+    VAR num pos;
+    PERS num values{17};
+    VAR num place := 0;
+    VAR bool ok;
+    VAR robtarget TargetPos;
+    VAR robtarget TargetPos2;
+    VAR robtarget cap_pose :=[[550,0,340],[0, 0, 1, 0],[0,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    VAR robtarget place_pose;
+    VAR robtarget place_pose2;
+    VAR bool Boolean1 := FALSE;
+    
+    PROC CAP_POS()
+        MoveL cap_pose, v300, z100, tool0\WObj:=wobj0;
+        
+    ENDPROC
+    
+    PROC Robotiqinit()
+        SetGO B0Go_ActionReq,0;
+        WaitTime 1;
+        SetGO B0Go_ActionReq,9;
+        WaitTime 1;
+        SetGO B4Go_Speed, 100;
+    ENDPROC
+    
+    PROC RobotiqOpen()
+         SetGO B3Go_PosReq,130;
+         SetGO B4Go_Speed, 100;
+    ENDPROC
+    
+    PROC RobotiqClose()
+        SetGO B3Go_PosReq,255;
+        SetGO B4Go_Speed, 100;
+    ENDPROC
+    
+    PROC Pick_POS()
+        TargetPos.trans := [values{2}, values{3}, values{4}];
+        TargetPos.rot := [values{5}, values{6}, values{7}, values{8}];
+        TargetPos.robconf := [values{9}, values{10}, values{11}, values{12}];
+        TargetPos.extax := [9E+09,9E+09,9E+09,9E+09,9E+09,9E+09];
+        
+        TargetPos2.trans := [values{2}, values{3}, (values{4} + 200)];
+        TargetPos2.rot := [values{5}, values{6}, values{7}, values{8}];
+        TargetPos2.robconf := [values{9}, values{10}, values{11}, values{12}];
+        TargetPos2.extax := [9E+09,9E+09,9E+09,9E+09,9E+09,9E+09];
+        
+        MoveL TargetPos2, v200, z100, tool0;
+        RobotiqOpen;
+        MoveL TargetPos, v100, z100, tool0;
+        WaitTime\InPos,0.5;
+        RobotiqClose;
+        WaitTime\InPos,0.5;
+        MoveL TargetPos2, v200, z100, tool0;
+        
+    ENDPROC
+    
+    PROC Pick_POS1()
+        TargetPos.trans := [values{2}, values{3}, values{4}- 20];
+        TargetPos.rot := [values{5}, values{6}, values{7}, values{8}];
+        TargetPos.robconf := [values{9}, values{10}, values{11}, values{12}];
+        TargetPos.extax := [9E+09,9E+09,9E+09,9E+09,9E+09,9E+09];
+        
+        TargetPos2.trans := [values{2}, values{3}, (values{4} + 200)];
+        TargetPos2.rot := [values{5}, values{6}, values{7}, values{8}];
+        TargetPos2.robconf := [values{9}, values{10}, values{11}, values{12}];
+        TargetPos2.extax := [9E+09,9E+09,9E+09,9E+09,9E+09,9E+09];
+        
+        MoveL TargetPos2, v200, z100, tool0;
+        RobotiqOpen;
+        MoveL TargetPos, v100, z100, tool0;
+        WaitTime\InPos,1;
+        RobotiqClose;
+        WaitTime\InPos,1;
+        MoveL TargetPos2, v200, z100, tool0;
+        
+    ENDPROC
+  
+        PROC Pick_POS2()
+        TargetPos.trans := [values{2}, values{3}, values{4}- 26];
+        TargetPos.rot := [values{5}, values{6}, values{7}, values{8}];
+        TargetPos.robconf := [values{9}, values{10}, values{11}, values{12}];
+        TargetPos.extax := [9E+09,9E+09,9E+09,9E+09,9E+09,9E+09];
+        
+        TargetPos2.trans := [values{2}, values{3}, (values{4} + 200)];
+        TargetPos2.rot := [values{5}, values{6}, values{7}, values{8}];
+        TargetPos2.robconf := [values{9}, values{10}, values{11}, values{12}];
+        TargetPos2.extax := [9E+09,9E+09,9E+09,9E+09,9E+09,9E+09];
+        
+        MoveL TargetPos2, v200, z100, tool0;
+        RobotiqOpen;
+        MoveL TargetPos, v100, z100, tool0;
+        WaitTime\InPos,1;
+        RobotiqClose;
+        WaitTime\InPos,1;
+        MoveL TargetPos2, v200, z100, tool0;
+        
+    ENDPROC
+    
+    PROC Place_POS()
+        place_pose.trans := [235 + place,530,150];
+        place_pose.rot := [0.30100, -0.63982, 0.63985, -0.30103];
+        place_pose.robconf := [0,0,0,0];
+        place_pose.extax := [9E+09,9E+09,9E+09,9E+09,9E+09,9E+09];
+            
+        place_pose2.trans := [235 + place,530,(values{4} + 200)];
+        place_pose2.rot := [0, 0, 1, 0];
+        place_pose2.robconf := [0,0,0,0];
+        place_pose2.extax := [9E+09,9E+09,9E+09,9E+09,9E+09,9E+09];
+            
+        MoveL place_pose2, v300, z100, tool0;
+        MoveL place_pose, v100, z100, tool0;
+        WaitTime\InPos,0.5;
+        RobotiqOpen;
+        WaitTime\InPos,0.5;
+        MoveL place_pose2, v100, z100, tool0;
+        RobotiqClose;
+        
+    ENDPROC
+    
+    PROC Place_POS1()
+        place_pose.trans := [235 + place,530,200];
+        place_pose.rot := [0, -0.70717, 0.70704, 0];
+        place_pose.robconf := [0,0,0,0];
+        place_pose.extax := [9E+09,9E+09,9E+09,9E+09,9E+09,9E+09];
+            
+        place_pose2.trans := [235 + place,530,(values{4} + 200)];
+        place_pose2.rot := [0, 0, 1, 0];
+        place_pose2.robconf := [0,0,0,0];
+        place_pose2.extax := [9E+09,9E+09,9E+09,9E+09,9E+09,9E+09];
+            
+        MoveL place_pose2, v300, z100, tool0;
+        MoveL place_pose, v100, z100, tool0;
+        WaitTime\InPos,0.5;
+        RobotiqOpen;
+        WaitTime\InPos,0.5;
+        MoveL place_pose2, v100, z100, tool0;
+        RobotiqClose;
+        
+    ENDPROC
+    
+    PROC main()
+        CAP_POS;
+        TPWrite "Creating server socket...";
+        SocketCreate serverSocket;
+        SocketBind serverSocket, "xxx.xxx.xx.1", 5000;
+        SocketListen serverSocket;
+        TPWrite "Waiting for client connection...";
+    
+        SocketAccept serverSocket, clientSocket, \Time:=WAIT_MAX;
+        TPWrite "Client connected.";
+        SocketSend clientSocket, \Str:="Connected to ABB Robot";
+    
+        WHILE TRUE DO
+            SocketReceive clientSocket \Str:=data;
+            TPWrite "Received Data:";
+            TPWrite data;
+    
+            ! Parse data
+            FOR i FROM 1 TO 16 DO
+                pos := StrFind(data, 1, ",");
+                IF pos = 0 THEN
+                    part := data;
+                    data := "";
+                ELSE
+                    part := StrPart(data, 1, pos - 1);
+                    data := StrPart(data, pos + 1, StrLen(data) - pos);
+                ENDIF
+                ok := StrToVal(part, values{i});
+            ENDFOR
+            
+            IF Boolean1 = FALSE THEN
+                Robotiqinit;
+                Boolean1 := TRUE;
+            ENDIF
+            
+            waitTime 0.5;
+            IF values{1} = 0 THEN
+                Pick_POS2;
+                Place_POS1;
+                CAP_POS;
+                SocketSend clientSocket, \Str:="At Capture Pos";
+                
+            ELSEIF values{1} = 1 THEN
+                Pick_POS2;
+                Place_POS1;
+                CAP_POS;
+                SocketSend clientSocket, \Str:="At Capture Pos";
+                
+            ELSEIF values{1} = 2 THEN
+                Pick_POS;
+                Place_POS1;
+                CAP_POS;
+                SocketSend clientSocket, \Str:="At Capture Pos";
+                
+            ELSE
+                Pick_POS1;
+                Place_POS1;
+                CAP_POS;
+                SocketSend clientSocket, \Str:="At Capture Pos";
+            ENDIF
+            place := place + 35;
+        ENDWHILE
+    
+        SocketClose clientSocket;
+        SocketClose serverSocket;
+    ENDPROC
+
+
+ENDMODULE
